@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.4.1 (Unreleased)
--------------------------
+2.4.1 (July 8, 2026)
+--------------------
 - Fix #60: Fix auto update modules
 - Fix #62: Fix deprecated proxy module settings method
 - Enh #66: Remove deprecations
