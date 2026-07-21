@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.2 (Unreleased)
+------------------
+- Enh #67: Remove directories left empty after update file deletions (`static` moved into `protected/humhub` with HumHub 1.19, humhub/humhub#8102)
+- Fix #67: Only check `static` folder permissions when the update package contains one
+
 2.4.1 (July 8, 2026)
 --------------------
 - Fix #60: Fix auto update modules
