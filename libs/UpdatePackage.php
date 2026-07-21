@@ -154,9 +154,12 @@ class UpdatePackage
             $notWritable[] = $vendorPath;
         }
 
-        $webrootStaticPath = Yii::getAlias('@webroot/static');
-        if (!$this->isWritable($webrootStaticPath)) {
-            $notWritable[] = $webrootStaticPath;
+        // Only packages for HumHub prior 1.19 ship a complete `static` folder
+        if (is_dir($this->getNewFileDirectory() . DIRECTORY_SEPARATOR . 'static')) {
+            $webrootStaticPath = Yii::getAlias('@webroot/static');
+            if (!$this->isWritable($webrootStaticPath)) {
+                $notWritable[] = $webrootStaticPath;
+            }
         }
 
         // Test Backup Path
@@ -350,14 +353,33 @@ class UpdatePackage
     }
 
     /**
-     * Delete a file
+     * Delete a file and parent directories which were left empty, e.g. the `static`
+     * and `themes/HumHub` folders which moved into `protected/humhub` with HumHub 1.19
      *
-     * @todo Also delete parent directories - when empty
      * @param type $file
      */
     private function deleteFile($file)
     {
-        return @unlink($file);
+        if (!@unlink($file)) {
+            return false;
+        }
+
+        $webroot = realpath(Yii::getAlias('@webroot'));
+        if ($webroot === false) {
+            return true;
+        }
+
+        $directory = dirname($file);
+        while (
+            ($real = realpath($directory)) !== false
+            && $real !== $webroot
+            && str_starts_with($real, $webroot . DIRECTORY_SEPARATOR)
+            && @rmdir($real)
+        ) {
+            $directory = dirname($directory);
+        }
+
+        return true;
     }
 
     protected function getTempPath()
